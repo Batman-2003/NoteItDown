@@ -63,20 +63,28 @@ app.post('/signup',async (req, res)=>{
 
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
-  
+    console.log(username,password);
     if (!username || !password) {
       return res.status(400).json({ message: 'Username and password required' });
     }
-  
+    
     try {
       // Check if user exists
-      const [users] = await db.query('SELECT * FROM users WHERE username = ?', [username]);
-      if (users.length === 0) {
-        return res.status(401).json({ message: 'Invalid username or password' });
-      }
+      // const users= db.query('SELECT * FROM users WHERE username = ?', [username]);
+      // console.log(users.rows);
+      // if (users.length === 0) {
+      //   return res.status(401).json({ message: 'Invalid username or password' });
+      // }
   
+      const [rows] = await db.query('SELECT * FROM users WHERE username = ?', [username]);
+    if (rows.length > 0) {
+      console.log(rows[0]); // First user found
+    } else {
+      console.log('User not found');
+    }
+
       const user = users[0];
-  
+      console.log(user);
       // Compare passwords
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
